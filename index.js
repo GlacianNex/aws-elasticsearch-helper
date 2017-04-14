@@ -1,27 +1,23 @@
 'use strict';
 
 const elasticsearch = require('elasticsearch');
-const config = require('config');
+const winston = require('winston');
 const AWS = require('aws-sdk');
 const Q = require('q');
 
 class ESServer {
 
-    constructor(host, region, awsProfile) {
-        let credentials = new AWS.EnvironmentCredentials('AWS');
-        if (awsProfile) {
-            credentials = new AWS.SharedIniFileCredentials({profile: awsProfile});
-        }
-
-        const region = region || process.env.AWS_DEFAULT_REGION;
+    constructor(host, awsRegion, log) {
+        const credentials = new AWS.EnvironmentCredentials('AWS');
+        const region = (awsRegion || process.env.AWS_DEFAULT_REGION);
         this.client = new elasticsearch.Client({
             connectionClass: require('http-aws-es'),
-            host: host,
+            host,
             amazonES: {
                 credentials,
                 region
             },
-            log: 'info'
+            log
         });
     }
 
@@ -34,6 +30,7 @@ class ESServer {
     }
 
     updateDocument(index, routing, type, id, document) {
+        winston.debug('Image Record - es update:', { index, routing, type, id });
         const deferred = Q.defer();
         const params = { index, type, id, routing, body: { doc: document } };
         this.client.update(params).
@@ -42,6 +39,7 @@ class ESServer {
     }
 
     deleteDocument(index, routing, type, id) {
+        winston.debug('Image Record - es delete:', { index, routing, type, id });
         const deferred = Q.defer();
         const params = { index, type, id, routing };
         this.client.delete(params).
@@ -50,6 +48,7 @@ class ESServer {
     }
 
     createDocument(index, routing, type, id, document) {
+        winston.debug('Image Record - es create:', { index, routing, type, id });
         const deferred = Q.defer();
         const params = { body: document, index, type, routing, id };
         this.client.index(params).
