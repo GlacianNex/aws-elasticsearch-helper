@@ -6,9 +6,10 @@ const AWS = require('aws-sdk');
 const Q = require('q');
 
 class ESServer {
-  constructor(host, awsRegion, log) {
-    const credentials = new AWS.EnvironmentCredentials('AWS');
+  constructor(host, log, profile, awsRegion) {
+    const credentials = profile ? new AWS.SharedIniFileCredentials({ profile }) : new AWS.EnvironmentCredentials('AWS');
     const region = (awsRegion || process.env.AWS_DEFAULT_REGION);
+
     this.client = new elasticsearch.Client({
       connectionClass: httpAWSES,
       host,
@@ -16,7 +17,7 @@ class ESServer {
         credentials,
         region,
       },
-      log,
+      log: (log || 'info'),
     });
   }
 

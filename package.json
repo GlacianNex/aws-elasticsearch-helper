@@ -1,6 +1,6 @@
 {
   "name": "aws-elasticsearch-helper",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Library that makes AWS ES super simple to use. Support Proxy, so you don't have to.",
   "main": "index.js",
   "dependencies": {
