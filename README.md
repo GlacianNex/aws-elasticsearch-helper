@@ -14,14 +14,14 @@ The goal of this library is to reduce the amount of setup code you need to perfo
 
 Library permits you to specify the following attributes:
 * host - Address of your ElasticSearch server (required).
-* awsRegion - region in which your ElasticSearch is located, default: `process.env.AWS_DEFAULT_REGION`. (optional)
 * log - level of logging you want done on your ES events, default: 'info'. (optional)
-* awsCredPrefix - prefix that will be used by `AWS.EnvironmentCredentials` to get credentials, default: 'AWS'. (optional)
+* profile - profile that will be used to get your AWS credentials. If none provided it will use `AWS.EnvironmentCredentials` with 'AWS' prefix (default in lambda environments) to get credentials (optional)
+* awsRegion - region in which your ElasticSearch is located, default: `process.env.AWS_DEFAULT_REGION`. (optional)
 
 ``` js
 exports.handler = (event, context, callback) => {
     const ESServer = require('aws-elasticsearch-helper');
-    const esSrv = new ESServer('https://awsesome.sauce.com');
+    const esSrv = new ESServer('https://awsesome.sauce.com', 'info');
 
     esSrv.ping().
     then(() => esSrv.createDocument('index', 'routing', 'id', {hello: 'world'})).
