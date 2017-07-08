@@ -16,7 +16,7 @@ class ESServer {
 
     params.amazonES.region = (awsRegion || process.env.AWS_DEFAULT_REGION);
     AWS.config.update({
-      region
+      region: params.amazonES.region
     });
 
     if (profile) {
@@ -84,8 +84,7 @@ class ESServer {
   ping() {
     const deferred = Q.defer();
     this.client.ping({
-        requestTimeout: 30000,
-        hello: 'elasticsearch'
+        requestTimeout: 30000
       })
       .then(() => deferred.resolve(), err => deferred.reject(err));
     return deferred.promise;
