@@ -6,62 +6,88 @@ const AWS = require('aws-sdk');
 const Q = require('q');
 
 class ESServer {
-  constructor(host, log, profile, awsRegion) {
-    let credentials = new AWS.EnvironmentCredentials('AWS');
-    if (profile) {
-      credentials = new AWS.SharedIniFileCredentials({ profile });
-    } else if (process.env.AWS_PROFILE) {
-      credentials = new AWS.SharedIniFileCredentials({ profile: process.env.AWS_PROFILE });
-    }
-    const region = (awsRegion || process.env.AWS_DEFAULT_REGION);
-
-    this.client = new elasticsearch.Client({
+  constructor(host, log, awsRegion, profile) {
+    const params = {
       connectionClass: httpAWSES,
       host,
-      amazonES: {
-        credentials,
-        region,
-      },
+      amazonES: {},
       log: (log || 'info'),
+    }
+
+    params.amazonES.region = (awsRegion || process.env.AWS_DEFAULT_REGION);
+    AWS.config.update({
+      region
     });
+
+    if (profile) {
+      params.amazonES.credentials = new AWS.SharedIniFileCredentials({
+        profile
+      });
+    }
+
+    this.client = new elasticsearch.Client(params);
   }
 
   doesIndexExist(index) {
     const deferred = Q.defer();
-    const params = { index };
+    const params = {
+      index
+    };
     this.client.indices.exists(params)
-        .then(result => deferred.resolve(result), err => deferred.reject(err));
+      .then(result => deferred.resolve(result), err => deferred.reject(err));
     return deferred.promise;
   }
 
   updateDocument(index, routing, type, id, document) {
     const deferred = Q.defer();
-    const params = { index, type, id, routing, body: { doc: document } };
+    const params = {
+      index,
+      type,
+      id,
+      routing,
+      body: {
+        doc: document
+      }
+    };
     this.client.update(params)
-        .then(result => deferred.resolve(result), err => deferred.reject(err));
+      .then(result => deferred.resolve(result), err => deferred.reject(err));
     return deferred.promise;
   }
 
   deleteDocument(index, routing, type, id) {
     const deferred = Q.defer();
-    const params = { index, type, id, routing };
+    const params = {
+      index,
+      type,
+      id,
+      routing
+    };
     this.client.delete(params)
-        .then(result => deferred.resolve(result), err => deferred.reject(err));
+      .then(result => deferred.resolve(result), err => deferred.reject(err));
     return deferred.promise;
   }
 
   createDocument(index, routing, type, id, document) {
     const deferred = Q.defer();
-    const params = { body: document, index, type, routing, id };
+    const params = {
+      body: document,
+      index,
+      type,
+      routing,
+      id
+    };
     this.client.index(params)
-        .then(result => deferred.resolve(result), err => deferred.reject(err));
+      .then(result => deferred.resolve(result), err => deferred.reject(err));
     return deferred.promise;
   }
 
   ping() {
     const deferred = Q.defer();
-    this.client.ping({ requestTimeout: 30000, hello: 'elasticsearch' })
-        .then(() => deferred.resolve(), err => deferred.reject(err));
+    this.client.ping({
+        requestTimeout: 30000,
+        hello: 'elasticsearch'
+      })
+      .then(() => deferred.resolve(), err => deferred.reject(err));
     return deferred.promise;
   }
 }
