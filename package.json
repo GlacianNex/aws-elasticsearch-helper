@@ -1,17 +1,17 @@
 {
   "name": "aws-elasticsearch-helper",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Library that makes AWS ES super simple to use. Support Proxy, so you don't have to.",
   "main": "index.js",
   "dependencies": {
-    "elasticsearch" : "*",
-    "http-aws-es" : "*",
-    "aws-sdk" : "*",
-    "q" : "*"
+    "elasticsearch": "*",
+    "http-aws-es": "*",
+    "aws-sdk": "*",
+    "q": "*"
   },
   "devDependencies": {
     "mocha": "*",
-    "chai" : "*",
+    "chai": "*",
     "eslint": "^3.19.0",
     "eslint-config-airbnb": "^14.1.0",
     "eslint-plugin-import": "^2.2.0",
