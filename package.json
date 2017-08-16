@@ -1,6 +1,6 @@
 {
   "name": "aws-elasticsearch-helper",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Library that makes AWS ES super simple to use. Support Proxy, so you don't have to.",
   "main": "index.js",
   "dependencies": {
@@ -25,12 +25,7 @@
     "type": "git",
     "url": "git+https://github.com/GlacianNex/aws-elasticsearch-helper.git"
   },
-  "keywords": [
-    "aws",
-    "elasticsearch",
-    "simple",
-    "proxy"
-  ],
+  "keywords": ["aws", "elasticsearch", "simple", "proxy"],
   "author": "Igor Chernyy",
   "license": "MIT",
   "bugs": {

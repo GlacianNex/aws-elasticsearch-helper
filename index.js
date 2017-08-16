@@ -11,10 +11,10 @@ class ESServer {
       connectionClass: httpAWSES,
       host,
       amazonES: {},
-      log: (log || 'info'),
-    }
+      log: log || 'info'
+    };
 
-    params.amazonES.region = (awsRegion || process.env.AWS_DEFAULT_REGION);
+    params.amazonES.region = awsRegion || process.env.AWS_DEFAULT_REGION;
     AWS.config.update({
       region: params.amazonES.region
     });
@@ -33,8 +33,17 @@ class ESServer {
     const params = {
       index
     };
-    this.client.indices.exists(params)
-      .then(result => deferred.resolve(result), err => deferred.reject(err));
+    this.client.indices.exists(params).then(result => deferred.resolve(result), err => deferred.reject(err));
+    return deferred.promise;
+  }
+
+  createIndex(index, body) {
+    const deferred = Q.defer();
+    const params = {
+      index,
+      body
+    };
+    this.client.indices.create(params).then(result => deferred.resolve(result), err => deferred.reject(err));
     return deferred.promise;
   }
 
@@ -49,8 +58,7 @@ class ESServer {
         doc: document
       }
     };
-    this.client.update(params)
-      .then(result => deferred.resolve(result), err => deferred.reject(err));
+    this.client.update(params).then(result => deferred.resolve(result), err => deferred.reject(err));
     return deferred.promise;
   }
 
@@ -62,8 +70,7 @@ class ESServer {
       id,
       routing
     };
-    this.client.delete(params)
-      .then(result => deferred.resolve(result), err => deferred.reject(err));
+    this.client.delete(params).then(result => deferred.resolve(result), err => deferred.reject(err));
     return deferred.promise;
   }
 
@@ -76,14 +83,14 @@ class ESServer {
       routing,
       id
     };
-    this.client.index(params)
-      .then(result => deferred.resolve(result), err => deferred.reject(err));
+    this.client.index(params).then(result => deferred.resolve(result), err => deferred.reject(err));
     return deferred.promise;
   }
 
   ping() {
     const deferred = Q.defer();
-    this.client.ping({
+    this.client
+      .ping({
         requestTimeout: 30000
       })
       .then(() => deferred.resolve(), err => deferred.reject(err));
